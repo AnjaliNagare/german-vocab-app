@@ -1,0 +1,27 @@
+.header { margin-bottom: 1.5rem; }
+.header h2 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.header p { color: var(--text-muted); font-size: 14px; }
+
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.25rem; }
+
+.metric { text-align: center; padding: 1.25rem 1rem; }
+.metricNum { display: block; font-size: 28px; font-weight: 600; color: var(--text); }
+.metricLabel { display: block; font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.due { border-color: var(--blue-mid); background: var(--blue-light); }
+.due .metricNum { color: var(--blue); }
+
+.reviewPrompt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  border-left: 3px solid var(--blue-mid);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.reviewPrompt p { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+.emptyState { text-align: center; padding: 2rem; margin-bottom: 1.25rem; }
+.emptyState p { color: var(--text-muted); margin-bottom: 1rem; }
+
+.chartCard h3 { font-size: 15px; font-weight: 600; margin-bottom: 1rem; }

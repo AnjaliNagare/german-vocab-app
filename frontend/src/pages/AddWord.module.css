@@ -1,0 +1,23 @@
+.header { margin-bottom: 1.5rem; }
+.header h2 { font-size: 20px; font-weight: 600; }
+.header p { font-size: 14px; color: var(--text-muted); margin-top: 4px; }
+
+.formCard { max-width: 560px; }
+
+.form { display: flex; flex-direction: column; gap: 1rem; }
+
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+
+.actions { display: flex; gap: 10px; margin-top: 0.5rem; }
+
+.successMsg {
+  background: var(--green-light);
+  color: var(--green);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 1rem;
+}

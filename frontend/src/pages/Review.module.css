@@ -1,0 +1,28 @@
+.progressRow { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+.progressLabel { font-size: 13px; color: var(--text-muted); white-space: nowrap; }
+.progressBar { flex: 1; height: 6px; background: var(--gray-light); border-radius: 3px; overflow: hidden; }
+.progressFill { height: 100%; background: var(--blue-mid); border-radius: 3px; transition: width 0.4s ease; }
+
+.flashcard { text-align: center; padding: 2.5rem 2rem; min-height: 320px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; }
+
+.category { font-size: 12px; font-weight: 500; background: var(--blue-light); color: var(--blue); padding: 4px 12px; border-radius: 20px; }
+.german { font-size: 36px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
+.revealBtn { margin-top: 0.5rem; padding: 12px 32px; font-size: 15px; }
+.divider { width: 48px; height: 2px; background: var(--border); border-radius: 1px; }
+.english { font-size: 20px; color: var(--text-muted); }
+
+.aiBox { background: var(--amber-light); border-radius: var(--radius); padding: 1rem 1.25rem; text-align: left; width: 100%; }
+.aiLabel { font-size: 12px; font-weight: 600; color: var(--amber); margin-bottom: 6px; }
+.aiSentence { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+.aiTranslation { font-size: 14px; color: var(--text-muted); }
+
+.ratingLabel { font-size: 13px; color: var(--text-muted); }
+.ratings { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.ratings button { flex: 1; min-width: 80px; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 16px; }
+.ratings button span { font-size: 18px; font-weight: 700; }
+
+.empty { text-align: center; padding: 3rem 2rem; margin-top: 3rem; }
+.emptyIcon { font-size: 3rem; display: block; margin-bottom: 1rem; }
+.empty h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+.empty p { color: var(--text-muted); margin-bottom: 1.5rem; }
+.emptyActions { display: flex; gap: 10px; justify-content: center; }

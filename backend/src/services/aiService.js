@@ -65,6 +65,7 @@ async function generateWithOllama(germanWord, englishWord) {
       {
         model: 'llama3.2',
         prompt: GERMAN_PROMPT(germanWord, englishWord),
+        format: 'json',
         stream: false,
       },
       {
