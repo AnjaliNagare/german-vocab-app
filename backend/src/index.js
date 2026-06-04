@@ -17,7 +17,7 @@ app.get('/health', (req, res) => {
 // Routes
 app.use('/auth', require('./routes/auth'));
 app.use('/words', require('./routes/words'));
-// app.use('/review', require('./routes/review')); ← Phase 3
+app.use('/review', require('./routes/review'));
 
 // 404 handler
 app.use((req, res) => {
