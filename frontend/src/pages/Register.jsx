@@ -31,7 +31,7 @@ export default function Register() {
     <div className={styles.container}>
       <div className={styles.box}>
         <div className={styles.header}>
-          <span className={styles.flag}>🇩🇪</span>
+          <span className={styles.flag}>Wortify</span>
           <h1>VocabApp</h1>
           <p>Create your account</p>
         </div>

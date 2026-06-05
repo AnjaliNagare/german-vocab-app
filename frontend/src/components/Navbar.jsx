@@ -20,7 +20,7 @@ export default function Navbar() {
     <nav className={styles.nav}>
       <div className={styles.inner}>
         <Link to="/dashboard" className={styles.logo}>
-          🇩🇪 VocabApp
+          Wortify
         </Link>
         <div className={styles.links}>
           <Link to="/dashboard" className={isActive('/dashboard') ? styles.active : ''}>Dashboard</Link>

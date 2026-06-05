@@ -31,7 +31,7 @@ export default function Login() {
     <div className={styles.container}>
       <div className={styles.box}>
         <div className={styles.header}>
-          <span className={styles.flag}>🇩🇪</span>
+          <span className={styles.flag}>Wortify</span>
           <h1>VocabApp</h1>
           <p>Sign in to continue learning</p>
         </div>
