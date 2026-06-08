@@ -31,21 +31,27 @@ async function generateWithGroq(germanWord, englishWord) {
     console.log(`☁️  Groq: generating sentence for "${germanWord}"...`);
 
     const response = await axios.post(
-      'https://api.groq.com/openai/v1/chat/completions',
-      {
-        model: "llama-3.3-70b-specdec",
-        messages: [{ role: 'user', content: GERMAN_PROMPT(germanWord, englishWord) }],
-        max_tokens: 150,
-        temperature: 0.7,
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-        },
-        timeout: 15000,
+  'https://api.groq.com/openai/v1/chat/completions',
+  {
+    model: "llama-3.3-70b-specdec",
+    messages: [
+      { 
+        role: 'user', 
+        content: GERMAN_PROMPT(germanWord, englishWord) 
       }
-    );
+    ],
+    max_tokens: 150,
+    temperature: 0.7,
+    response_format: { type: "json_object" }, 
+  },
+  {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+    },
+    timeout: 15000,
+  }
+);
 
     const text = response.data?.choices?.[0]?.message?.content?.trim();
     return parseAIResponse(text, germanWord);
