@@ -6,10 +6,30 @@ const helmet = require('helmet');
 const app = express();
 
 app.use(helmet());
+
+const allowedOrigins = [
+  'http://localhost:5173', // Allows you to test things locally
+];
+
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Allow server-to-server requests or tools like Postman/Insomnia (which have no origin header)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error(`CORS policy blocked access from origin: ${origin}`), false);
+    }
+  },
   credentials: true
 }));
+
+
 app.use(express.json());
 
 // Health check

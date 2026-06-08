@@ -33,7 +33,8 @@ async function generateWithGroq(germanWord, englishWord) {
     const response = await axios.post(
   'https://api.groq.com/openai/v1/chat/completions',
   {
-    model: "llama-3.3-70b-specdec",
+    // FIX 1: Use 'versatile' or 'instant' instead of 'specdec'
+    model: "llama-3.3-70b-versatile", 
     messages: [
       { 
         role: 'user', 
@@ -42,14 +43,14 @@ async function generateWithGroq(germanWord, englishWord) {
     ],
     max_tokens: 150,
     temperature: 0.7,
-    response_format: { type: "json_object" }, 
+    response_format: { type: "json_object" } 
   },
   {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+      'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
     },
-    timeout: 15000,
+    timeout: 15000
   }
 );
 
