@@ -33,7 +33,7 @@ async function generateWithGroq(germanWord, englishWord) {
     const response = await axios.post(
       'https://api.groq.com/openai/v1/chat/completions',
       {
-        model: 'llama3.2',
+        model: "llama-3.3-70b-specdec",
         messages: [{ role: 'user', content: GERMAN_PROMPT(germanWord, englishWord) }],
         max_tokens: 150,
         temperature: 0.7,
