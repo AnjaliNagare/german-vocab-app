@@ -9,6 +9,7 @@ app.use(helmet());
 
 const allowedOrigins = [
   'http://localhost:5173', // Allows you to test things locally
+  'https://german-vocab-app-frontend.onrender.com',
 ];
 
 if (process.env.FRONTEND_URL) {
@@ -17,16 +18,13 @@ if (process.env.FRONTEND_URL) {
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow server-to-server requests or tools like Postman/Insomnia (which have no origin header)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
     } else {
-      return callback(new Error(`CORS policy blocked access from origin: ${origin}`), false);
+      callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
 }));
 
 

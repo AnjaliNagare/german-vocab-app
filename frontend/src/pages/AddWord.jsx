@@ -69,16 +69,40 @@ export default function AddWord() {
               />
             </div>
           </div>
+<div className={styles.field}>
+  <label>CEFR Level (optional)</label>
+  <select value={categoryId} onChange={e => setCategoryId(e.target.value)}>
+    <option value="">Select level...</option>
+    
+    {categories
+      .reduce((unique, current) => {
+        if (!unique.some(item => item.id === current.id || item.name === current.name)) {
+          unique.push(current);
+        }
+        return unique;
+      }, [])
+      .map(c => {
+        // This Regex deletes anything that isn't a standard letter, number, space, or normal punctuation
+        const sanitizeText = (str) => {
+          if (!str) return '';
+          return str
+            .replace(/[^\x00-\x7F]/g, '') // Strips out raw broken UTF-8/ISO bytes completely
+            .replace(/\s+/g, ' ')         // Cleans up any messy double spacing left over
+            .trim();
+        };
 
-          <div className={styles.field}>
-            <label>CEFR Level (optional)</label>
-            <select value={categoryId} onChange={e => setCategoryId(e.target.value)}>
-              <option value="">Select level...</option>
-              {categories.map(c => (
-                <option key={c.id} value={c.id}>{c.name} — {c.description}</option>
-              ))}
-            </select>
-          </div>
+        const cleanName = sanitizeText(c.name);
+        const cleanDescription = sanitizeText(c.description);
+
+        return (
+          <option key={c.id} value={c.id}>
+            {cleanName} - {cleanDescription}
+          </option>
+        );
+      })
+    }
+  </select>
+</div>
 
           <div className={styles.actions}>
             <button type="submit" className="btn-primary" disabled={loading}>

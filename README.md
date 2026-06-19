@@ -1,10 +1,10 @@
-# 🇩🇪 German Vocabulary App
+# Wortify - German Vocabulary App
 
 A full-stack German vocabulary learning app using the **SM-2 spaced repetition algorithm** and **AI-generated example sentences** to help users retain words in long-term memory.
 
 [![CI](https://github.com/AnjaliNagare/german-vocab-app/actions/workflows/ci.yml/badge.svg)](https://github.com/AnjaliNagare/german-vocab-app/actions/workflows/ci.yml)
 
-🔗 **Live app:** https://german-vocab-app.onrender.com
+🔗 **Live app:** https://german-vocab-app-frontend.onrender.com
 
 ---
 
