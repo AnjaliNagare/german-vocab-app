@@ -9,7 +9,13 @@ A full-stack German vocabulary learning app using the **SM-2 spaced repetition a
 ---
 # Screenshots
 1. Dashboard
-![Dashboard](/frontend/public/german-vocab-app1.png) ![Add a word page](/frontend/public/german-vocab-app.png) ![Word Review page](/frontend/public/german-vocab-app2.png) ![My words page](/frontend/public/german-vocab-app3.png)
+![Dashboard](/frontend/public/german-vocab-app1.png) 
+2. Add Word
+![Add a word page](/frontend/public/german-vocab-app.png) 
+3. Review Words
+![Word Review page](/frontend/public/german-vocab-app2.png) 
+4. My Words
+![My words page](/frontend/public/german-vocab-app3.png)
 
 ## Features
 
