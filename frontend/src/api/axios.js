@@ -13,14 +13,15 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Redirect to login on 401
 api.interceptors.response.use(
-  (response) => response,
+  (response) => response, // If the request succeeds, just pass it through
   (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+    // If the server returns a 403 or 401, the token is invalid or expired
+    if (error.response && (error.response.status === 403 || error.response.status === 401)) {
+      console.warn("Token expired or unauthorized. Logging out...");
+      
+      localStorage.removeItem('token'); // Clear the bad token
+      window.location.href = '/login';   // Force redirect to login page
     }
     return Promise.reject(error);
   }

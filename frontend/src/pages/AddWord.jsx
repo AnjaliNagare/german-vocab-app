@@ -3,6 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import styles from './AddWord.module.css';
 
+// 1. Move helper safely out of the loop to protect memory execution scope
+const sanitizeText = (str) => {
+  if (!str) return '';
+  return str
+    .replace(/[^\x00-\x7F]/g, '') // Completely strips out broken character byte sequences
+    .replace(/\s+/g, ' ')         // Collapses multi-spacing artifacts down to single spacing
+    .trim();
+};
+
 export default function AddWord() {
   const [german, setGerman] = useState('');
   const [english, setEnglish] = useState('');
@@ -14,7 +23,9 @@ export default function AddWord() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get('/words/categories').then(res => setCategories(res.data));
+    api.get('/words/categories')
+      .then(res => setCategories(res.data))
+      .catch(err => console.error("Failed to fetch categories:", err));
   }, []);
 
   const handleSubmit = async (e) => {
@@ -69,40 +80,32 @@ export default function AddWord() {
               />
             </div>
           </div>
-<div className={styles.field}>
-  <label>CEFR Level (optional)</label>
-  <select value={categoryId} onChange={e => setCategoryId(e.target.value)}>
-    <option value="">Select level...</option>
-    
-    {categories
-      .reduce((unique, current) => {
-        if (!unique.some(item => item.id === current.id || item.name === current.name)) {
-          unique.push(current);
-        }
-        return unique;
-      }, [])
-      .map(c => {
-        // This Regex deletes anything that isn't a standard letter, number, space, or normal punctuation
-        const sanitizeText = (str) => {
-          if (!str) return '';
-          return str
-            .replace(/[^\x00-\x7F]/g, '') // Strips out raw broken UTF-8/ISO bytes completely
-            .replace(/\s+/g, ' ')         // Cleans up any messy double spacing left over
-            .trim();
-        };
 
-        const cleanName = sanitizeText(c.name);
-        const cleanDescription = sanitizeText(c.description);
+          <div className={styles.field}>
+            <label>CEFR Level (optional)</label>
+            <select value={categoryId} onChange={e => setCategoryId(e.target.value)}>
+              <option value="">Select level...</option>
+              {categories
+                .reduce((unique, current) => {
+                  if (!unique.some(item => item.id === current.id || item.name === current.name)) {
+                    unique.push(current);
+                  }
+                  return unique;
+                }, [])
+                .map(c => {
+                  // Now executes cleanly via the global layout scope hook
+                  const cleanName = sanitizeText(c.name);
+                  const cleanDescription = sanitizeText(c.description);
 
-        return (
-          <option key={c.id} value={c.id}>
-            {cleanName} - {cleanDescription}
-          </option>
-        );
-      })
-    }
-  </select>
-</div>
+                  return (
+                    <option key={c.id} value={c.id}>
+                      {cleanName} - {cleanDescription}
+                    </option>
+                  );
+                })
+              }
+            </select>
+          </div>
 
           <div className={styles.actions}>
             <button type="submit" className="btn-primary" disabled={loading}>

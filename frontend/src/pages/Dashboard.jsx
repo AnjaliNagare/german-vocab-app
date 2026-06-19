@@ -9,11 +9,26 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    api.get('/review/stats').then(res => {
-      setStats(res.data);
-    }).finally(() => setLoading(false));
-  }, []);
+
+useEffect(() => {
+  // Grab the token from localStorage (wherever you save it upon logging in)
+  const token = localStorage.getItem('token'); 
+
+  api.get('/review/stats', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+  .then(res => {
+    setStats(res.data);
+  })
+  .catch(err => {
+    console.error("Dashboard fetch failed:", err);
+  }).finally(() => setLoading(false));
+}, []);
+
+
+
 
   if (loading) return <div className="loading">Loading dashboard...</div>;
 
@@ -64,7 +79,7 @@ export default function Dashboard() {
 
       {stats.totalWords === 0 && (
         <div className={`card ${styles.emptyState}`}>
-          <p>No words yet — add some to get started!</p>
+          <p>{stats?.totalWords || 0}</p>
           <button className="btn-primary" onClick={() => navigate('/add')}>
             Add your first word
           </button>
