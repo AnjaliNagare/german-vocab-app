@@ -7,7 +7,9 @@ A full-stack German vocabulary learning app using the **SM-2 spaced repetition a
 🔗 **Live app:** https://german-vocab-app-frontend.onrender.com
 
 ---
-
+# Screenshots
+1. Dashboard
+![Dashboard](german-vocab-app1.png) ![Add a word page](german-vocab-app.png) ![Word Review page](german-vocab-app2.png) ![My words page](german-vocab-app3.png)
 ## Features
 
 - **Spaced repetition (SM-2)** — words are scheduled for review at optimal intervals based on recall performance
