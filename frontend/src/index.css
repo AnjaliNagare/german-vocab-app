@@ -1,96 +1,100 @@
+@import './theme.css';
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-:root {
-  --blue: #185FA5;
-  --blue-light: #E6F1FB;
-  --blue-mid: #378ADD;
-  --green: #3B6D11;
-  --green-light: #EAF3DE;
-  --red: #A32D2D;
-  --red-light: #FCEBEB;
-  --amber: #854F0B;
-  --amber-light: #FAEEDA;
-  --gray: #444441;
-  --gray-light: #F1EFE8;
-  --border: #e0ddd6;
-  --text: #1A1A1A;
-  --text-muted: #6b6965;
-  --bg: #fafaf8;
-  --card-bg: #ffffff;
-  --radius: 10px;
-  --shadow: 0 1px 4px rgba(0,0,0,0.08);
-}
-
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-ui);
   background: var(--bg);
-  color: var(--text);
+  color: var(--ink);
   font-size: 15px;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--blue); text-decoration: none; }
+h1, h2 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.01em; }
+
+a { color: var(--primary); text-decoration: none; }
 a:hover { text-decoration: underline; }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 button {
   cursor: pointer;
   font-family: inherit;
   font-size: 14px;
   border: none;
-  border-radius: var(--radius);
+  border-radius: 10px;
   padding: 10px 20px;
   font-weight: 500;
-  transition: opacity 0.15s, transform 0.1s;
+  transition: background 0.15s, transform 0.1s, filter 0.15s;
 }
-button:hover { opacity: 0.88; }
-button:active { transform: scale(0.97); }
-button:disabled { opacity: 0.45; cursor: not-allowed; }
+button:hover { filter: brightness(0.96); }
+button:active { transform: scale(0.98); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.btn-primary { background: var(--blue); color: white; }
-.btn-secondary { background: var(--gray-light); color: var(--text); }
-.btn-danger { background: var(--red-light); color: var(--red); }
-.btn-green { background: var(--green-light); color: var(--green); }
-.btn-amber { background: var(--amber-light); color: var(--amber); }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-hover); filter: none; }
+.btn-cta { background: var(--accent); color: var(--on-accent); }
+.btn-cta:hover { background: var(--accent-hover); filter: none; }
+.btn-secondary { background: var(--surface-sunken); color: var(--ink); }
+.btn-danger { background: var(--forgot-tint); color: var(--forgot); }
+.btn-green { background: var(--easy-tint); color: var(--easy); }
+.btn-amber { background: var(--hard-tint); color: var(--hard); }
 
 input, select {
   font-family: inherit;
   font-size: 14px;
   padding: 10px 14px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: white;
-  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
   width: 100%;
   outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
-input:focus, select:focus { border-color: var(--blue-mid); }
+input:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+input::placeholder { color: #9CA3AF; }
 
 .card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1.25rem;
   box-shadow: var(--shadow);
 }
 
-.page {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 2rem 1.25rem;
-}
+.page { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem; }
 
 .error-msg {
-  background: var(--red-light);
-  color: var(--red);
-  border-radius: var(--radius);
+  background: var(--forgot-tint);
+  color: var(--forgot);
+  border-radius: 10px;
   padding: 10px 14px;
   font-size: 13px;
   margin-bottom: 1rem;
 }
 
-.loading {
-  text-align: center;
-  padding: 3rem;
-  color: var(--text-muted);
+.loading { text-align: center; padding: 3rem; color: var(--muted); }
+
+.chip {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.art { font-weight: 500; }
+.art-der { color: var(--der); }
+.art-die { color: var(--die); }
+.art-das { color: var(--das); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
 }

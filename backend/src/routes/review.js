@@ -13,33 +13,41 @@ router.get('/due', async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT
-        w.id, w.german, w.english, w.category_id, c.name as category_name,
-        COALESCE(
-          (SELECT next_review_at FROM review_logs
-           WHERE word_id = w.id AND user_id = $1
-           ORDER BY reviewed_at DESC LIMIT 1),
-          NOW()  -- new words are immediately due
-        ) as next_review_at,
-        (SELECT COUNT(*) FROM review_logs
-         WHERE word_id = w.id AND user_id = $1) as review_count
+         w.id, w.german, w.english, w.category_id, c.name AS category_name,
+         lr.next_review_at,
+         lr.ease_factor AS last_ease,
+         lr.interval_days AS last_interval,
+         (SELECT COUNT(*) FROM review_logs
+          WHERE word_id = w.id AND user_id = $1) AS review_count
        FROM words w
-       LEFT JOIN categories c ON w.category_id = c.id
+       LEFT JOIN categories c ON c.id = w.category_id
+       LEFT JOIN LATERAL (
+         SELECT next_review_at, ease_factor, interval_days
+         FROM review_logs
+         WHERE word_id = w.id AND user_id = $1
+         ORDER BY reviewed_at DESC
+         LIMIT 1
+       ) lr ON true
        WHERE w.user_id = $1
-         AND COALESCE(
-           (SELECT next_review_at FROM review_logs
-            WHERE word_id = w.id AND user_id = $1
-            ORDER BY reviewed_at DESC LIMIT 1),
-           NOW()
-         ) <= NOW()
-       ORDER BY next_review_at ASC
+         AND COALESCE(lr.next_review_at, NOW()) <= NOW()
+       ORDER BY COALESCE(lr.next_review_at, NOW()) ASC
        LIMIT 20`,
       [req.user.id]
     );
 
-    res.json({
-      due: result.rows,
-      count: result.rows.length,
+    const due = result.rows.map((row) => {
+      const state = {
+        easeFactor: row.last_ease ? parseFloat(row.last_ease) : 2.5,
+        intervalDays: row.last_interval ? parseInt(row.last_interval, 10) : 1,
+      };
+      const previews = {};
+      [1, 2, 3, 4].forEach((rating) => {
+        previews[rating] = calculateNextReview({ ...state, rating }).intervalDays;
+      });
+      return { ...row, previews };
     });
+
+    res.json({ due, count: due.length });
   } catch (err) {
     console.error('Get due words error:', err.message);
     res.status(500).json({ error: 'Server error.' });
@@ -113,40 +121,88 @@ router.post('/submit', async (req, res) => {
 });
 
 // GET /review/stats — dashboard stats
+function previousDay(dateStr) {
+  const d = new Date(`${dateStr}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - 1);
+  return d.toISOString().slice(0, 10);
+}
+
 router.get('/stats', async (req, res) => {
+  const userId = req.user.id;
+
   try {
-    const [totalWords, totalReviews, dueToday, streak] = await Promise.all([
-      pool.query('SELECT COUNT(*) FROM words WHERE user_id = $1', [req.user.id]),
+    const [totalWords, totalReviews, dueToday, weekly, activeDays, levels] =
+      await Promise.all([
+        pool.query('SELECT COUNT(*) FROM words WHERE user_id = $1', [userId]),
 
-      pool.query('SELECT COUNT(*) FROM review_logs WHERE user_id = $1', [req.user.id]),
+        pool.query('SELECT COUNT(*) FROM review_logs WHERE user_id = $1', [userId]),
 
-      pool.query(
-        `SELECT COUNT(DISTINCT w.id) FROM words w
-         WHERE w.user_id = $1
-           AND COALESCE(
-             (SELECT next_review_at FROM review_logs
-              WHERE word_id = w.id AND user_id = $1
-              ORDER BY reviewed_at DESC LIMIT 1),
-             NOW()
-           ) <= NOW()`,
-        [req.user.id]
-      ),
+        pool.query(
+          `SELECT COUNT(*) FROM words w
+           WHERE w.user_id = $1
+             AND COALESCE(
+               (SELECT next_review_at FROM review_logs
+                WHERE word_id = w.id AND user_id = $1
+                ORDER BY reviewed_at DESC LIMIT 1),
+               NOW()
+             ) <= NOW()`,
+          [userId]
+        ),
 
-      // Streak = consecutive days with at least one review
-      pool.query(
-        `SELECT COUNT(DISTINCT DATE(reviewed_at)) as streak_days
-         FROM review_logs
-         WHERE user_id = $1
-           AND reviewed_at >= NOW() - INTERVAL '30 days'`,
-        [req.user.id]
-      ),
-    ]);
+        pool.query(
+          `SELECT to_char(d::date, 'YYYY-MM-DD') AS date,
+                  COUNT(r.id)::int AS count
+           FROM generate_series(CURRENT_DATE - 6, CURRENT_DATE, '1 day') d
+           LEFT JOIN review_logs r
+             ON DATE(r.reviewed_at) = d::date AND r.user_id = $1
+           GROUP BY d
+           ORDER BY d`,
+          [userId]
+        ),
+
+        pool.query(
+          `SELECT DISTINCT to_char(DATE(reviewed_at), 'YYYY-MM-DD') AS day
+           FROM review_logs
+           WHERE user_id = $1 AND reviewed_at >= NOW() - INTERVAL '90 days'`,
+          [userId]
+        ),
+
+        pool.query(
+          `SELECT COALESCE(c.name, 'Other') AS level,
+        COUNT(*)::int AS total,
+        COUNT(*) FILTER (WHERE COALESCE(lr.interval_days, 0) >= 21)::int AS mastered,
+        COUNT(*) FILTER (WHERE lr.interval_days IS NOT NULL AND lr.interval_days < 21)::int AS learning
+ FROM words w
+           LEFT JOIN categories c ON c.id = w.category_id
+           LEFT JOIN LATERAL (
+             SELECT interval_days FROM review_logs
+             WHERE word_id = w.id AND user_id = $1
+             ORDER BY reviewed_at DESC LIMIT 1
+           ) lr ON true
+           WHERE w.user_id = $1
+           GROUP BY COALESCE(c.name, 'Other')
+           ORDER BY 1`,
+          [userId]
+        ),
+      ]);
+
+    const active = new Set(activeDays.rows.map((r) => r.day));
+    let cursor = weekly.rows[weekly.rows.length - 1].date;
+    if (!active.has(cursor)) cursor = previousDay(cursor);
+
+    let streak = 0;
+    while (active.has(cursor)) {
+      streak += 1;
+      cursor = previousDay(cursor);
+    }
 
     res.json({
-      totalWords: parseInt(totalWords.rows[0].count),
-      totalReviews: parseInt(totalReviews.rows[0].count),
-      dueToday: parseInt(dueToday.rows[0].count),
-      streakDays: parseInt(streak.rows[0].streak_days),
+      totalWords: parseInt(totalWords.rows[0].count, 10),
+      totalReviews: parseInt(totalReviews.rows[0].count, 10),
+      dueToday: parseInt(dueToday.rows[0].count, 10),
+      streakDays: streak,
+      weekly: weekly.rows,
+      levels: levels.rows,
     });
   } catch (err) {
     console.error('Stats error:', err.message);

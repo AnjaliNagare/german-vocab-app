@@ -1,54 +1,82 @@
 .nav {
-  background: white;
-  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
 .inner {
-  max-width: 860px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 0 1.25rem;
   display: flex;
   align-items: center;
-  height: 56px;
-  gap: 1.5rem;
+  height: 60px;
+  gap: 1.25rem;
 }
 
 .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-weight: 600;
   font-size: 16px;
-  color: var(--text);
+  color: var(--ink);
   text-decoration: none;
   white-space: nowrap;
 }
+.logo:hover { text-decoration: none; }
 
-.links {
-  display: flex;
-  gap: 0.25rem;
-  flex: 1;
-}
+.mark { flex-shrink: 0; border-radius: 4px; }
 
-.links a {
-  color: var(--text-muted);
-  text-decoration: none;
+.links { display: flex; gap: 2px; flex: 1; }
+
+.link {
+  color: var(--muted);
   font-size: 14px;
-  padding: 6px 12px;
+  padding: 7px 12px;
   border-radius: 8px;
+  text-decoration: none;
   transition: background 0.15s, color 0.15s;
 }
-
-.links a:hover { background: var(--gray-light); color: var(--text); }
-.active { background: var(--blue-light) !important; color: var(--blue) !important; font-weight: 500; }
+.link:hover { background: var(--primary-soft); color: var(--ink); text-decoration: none; }
+.active { background: var(--primary-soft); color: var(--primary); font-weight: 500; }
 
 .right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-.email { font-size: 13px; color: var(--text-muted); }
 
-.logoutBtn {
-  background: var(--gray-light);
-  color: var(--text);
-  padding: 6px 14px;
+.addBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--accent);
+  color: var(--on-accent);
   font-size: 13px;
-  border-radius: 8px;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+}
+.addBtn:hover { background: var(--accent-hover); text-decoration: none; }
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.logoutBtn { background: transparent; color: var(--muted); padding: 6px 10px; font-size: 13px; }
+.logoutBtn:hover { background: var(--surface-sunken); }
+
+@media (max-width: 720px) {
+  .addBtn span, .logoutBtn { display: none; }
+  .inner { gap: 0.75rem; }
+  .link { padding: 7px 8px; font-size: 13px; }
 }
